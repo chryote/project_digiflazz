@@ -1,0 +1,19 @@
+meta {
+  name: Regenerate API Key
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/api/v1/auth/regenerate-api-key
+  body: none
+  auth: bearer
+}
+
+headers {
+  Accept: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}

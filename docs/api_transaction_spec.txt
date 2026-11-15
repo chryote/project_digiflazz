@@ -1,0 +1,72 @@
+<spec> 
+Bayar Tagihan¶
+
+Seluruh transaksi API kami akan diproses secara sinkron, yang berarti seluruh permintaan request akan langsung mendapatkan respon status sukses/gagal/pending.
+
+Cek Status
+
+Anda juga dapat melakukan Cek status dengan ref_id yang sama pada transaksi sebelumnya. Cara cek status dapat dibaca di menu Cek Status
+
+Respon Pending
+
+Jika transaksi mendapatkan response status pending, Anda dapat:
+
+    Menunggu notifikasi perubahan status melalui Webhook
+
+    Atau melakukan Cek Status
+
+Endpoint¶
+
+https://api.digiflazz.com/v1/transaction
+
+Mohon Perhatian
+
+Anda hanya dapat melakukan pembayaran tagihan pada tanggal yang sama dengan tanggal pengecekan tagihan.
+Request¶
+
+Berikut adalah struktur JSON yang diharapkan:
+Parameter 	Deskripsi 	Tipe Data 	Wajib
+commands 	Perintah yang akan dieksekusi: pay-pasca 	String 	Ya
+username 	Username yang telah diatur di pengaturan koneksi API 	String 	Ya
+buyer_sku_code 	Kode produk Anda 	String 	Ya
+customer_no 	Nomor Pelanggan 	String 	Ya
+ref_id 	Ref ID unik Anda yang sama dengan saat Inquiry 	String 	Ya
+sign 	Signature dengan formula md5(username + apiKey + ref_id) 	String 	Ya
+testing 	Value true apabila ingin melakukan development 	Boolean 	Tidak
+
+{
+    "commands": "pay-pasca",
+    "username": "username",
+    "buyer_sku_code": "pln",
+    "customer_no": "530000000003",
+    "ref_id": "some1d",
+    "sign": "740b00a1b8784e028cc8078edf66d12b"
+}
+
+Response PLN¶
+
+Berikut adalah struktur JSON yang akan diterima:
+Parameter 	Deskripsi 	Tipe Data 	Wajib
+ref_id 	Ref ID Unik Anda 	String 	Ya
+customer_no 	Nomor pelanggan 	String 	Ya
+customer_name 	Nama pelanggan 	String 	Ya
+buyer_sku_code 	Kode produk Anda 	String 	Ya
+admin 	Total biaya admin 	Int 	Ya
+message 	Deskripsi Status Transaksi 	String 	Ya
+status 	Status transaksi Sukses atau Gagal 	String 	Ya
+rc 	Response Code 	String 	Ya
+periode 	Periode tagihan 	String 	Tidak
+sn 	Serial Number / Reference Number 	String 	Ya
+buyer_last_saldo 	Saldo terakhir Anda setelah transaksi terjadi 	Float 	Ya
+price 	Harga yang akan dipotong dari deposit Anda 	Int 	Ya
+selling_price 	Harga yang akan dipotong dari client Anda 	Int 	Ya
+desc 	Deskripsi produk 	- 	Ya
+   tarif 	Tarif pln 	String 	Tidak
+   daya 	Daya pln 	Int 	Tidak
+   lembar_tagihan 	Jumlah lembar tagihan 	Int 	Tidak
+   detail 	Detail setiap lembar tagihan 	- 	Ya
+      periode 	Periode tagihan 	String 	Tidak
+      nilai_tagihan 	Nilai tagihan periode tertentu 	String 	Tidak
+      admin 	Biaya admin tagihan tertentu 	String 	Tidak
+      denda 	Biaya denda tagihan tertentu 	String 	Tidak
+</spec>

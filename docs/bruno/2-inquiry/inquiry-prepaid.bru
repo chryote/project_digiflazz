@@ -1,0 +1,33 @@
+meta {
+  name: Inquiry PLN Prepaid (1234554321)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/v1/inquiry-pln
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+script:pre-request {
+  const username = bru.getVar("username") || "";
+  const apiKey = bru.getVar("api_key") || "";
+  const customerNo = "1234554321";
+  const crypto = require("crypto");
+  const sign = crypto.createHash("md5").update(username + apiKey + customerNo).digest("hex");
+  bru.setVar("inq_sign_prepaid", sign);
+}
+
+body:json {
+  {
+    "username": "{{username}}",
+    "customer_no": "1234554321",
+    "sign": "{{inq_sign_prepaid}}"
+  }
+}

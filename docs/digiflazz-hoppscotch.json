@@ -1,0 +1,326 @@
+[
+  {
+    "v": 2,
+    "name": "Digiflazz PLN API",
+    "folders": [
+      {
+        "v": 2,
+        "name": "1. Authentication",
+        "folders": [],
+        "requests": [
+          {
+            "v": "3",
+            "name": "Login & Issue Bearer Token",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/auth/login",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"username\": \"<<username>>\",\n  \"password\": \"password123\",\n  \"device_name\": \"Hoppscotch Client\"\n}"
+            }
+          },
+          {
+            "v": "3",
+            "name": "Get Merchant Profile",
+            "method": "GET",
+            "endpoint": "<<base_url>>/api/v1/auth/me",
+            "params": [],
+            "headers": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <<token>>",
+                "active": true
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "active": true
+              }
+            ]
+          },
+          {
+            "v": "3",
+            "name": "Logout & Revoke Token",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/auth/logout",
+            "params": [],
+            "headers": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <<token>>",
+                "active": true
+              }
+            ]
+          },
+          {
+            "v": "3",
+            "name": "Regenerate API Key",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/auth/regenerate-api-key",
+            "params": [],
+            "headers": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <<token>>",
+                "active": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "v": 2,
+        "name": "2. PLN Inquiry",
+        "folders": [],
+        "requests": [
+          {
+            "v": "3",
+            "name": "Inquiry PLN Prepaid (1234554321)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/inquiry-pln",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"username\": \"<<username>>\",\n  \"customer_no\": \"1234554321\",\n  \"sign\": \"<<sign_prepaid>>\"\n}"
+            }
+          },
+          {
+            "v": "3",
+            "name": "Inquiry PLN Postpaid 1 Tagihan (530000000001)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/inquiry-pln",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"INQ-POST-001\",\n  \"sign\": \"<<sign_postpaid_1>>\"\n}"
+            }
+          },
+          {
+            "v": "3",
+            "name": "Inquiry PLN Postpaid 2 Tagihan (530000000002)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/inquiry-pln",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000002\",\n  \"ref_id\": \"INQ-POST-002\",\n  \"sign\": \"<<sign_postpaid_2>>\"\n}"
+            }
+          },
+          {
+            "v": "3",
+            "name": "Inquiry PLN Gagal (530000000003)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/inquiry-pln",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000003\",\n  \"ref_id\": \"INQ-POST-003\",\n  \"sign\": \"<<sign_fail>>\"\n}"
+            }
+          }
+        ]
+      },
+      {
+        "v": 2,
+        "name": "3. PLN Payment & Transactions",
+        "folders": [],
+        "requests": [
+          {
+            "v": "3",
+            "name": "Payment Sukses (530000000001)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/transaction",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"PAY-HOPP-001\",\n  \"sign\": \"<<pay_sign>>\",\n  \"testing\": true\n}"
+            }
+          },
+          {
+            "v": "3",
+            "name": "Cek Status / Idempotent Replay (Same ref_id)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/transaction",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"PAY-HOPP-001\",\n  \"sign\": \"<<pay_sign>>\",\n  \"testing\": true\n}"
+            }
+          },
+          {
+            "v": "3",
+            "name": "Payment Gagal (530000000006)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/transaction",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000006\",\n  \"ref_id\": \"PAY-FAIL-001\",\n  \"sign\": \"<<fail_sign>>\",\n  \"testing\": true\n}"
+            }
+          },
+          {
+            "v": "3",
+            "name": "Pending -> Callback Sukses 1 Tagihan (630000000001)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/transaction",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"630000000001\",\n  \"ref_id\": \"PEND-1-001\",\n  \"sign\": \"<<pend_sign>>\",\n  \"callback_url\": \"<<base_url>>/api/v1/mock-webhook\",\n  \"testing\": true\n}"
+            }
+          },
+          {
+            "v": "3",
+            "name": "Pending -> Callback Sukses 2 Tagihan (630000000002)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/transaction",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"630000000002\",\n  \"ref_id\": \"PEND-2-001\",\n  \"sign\": \"<<pend_sign_2>>\",\n  \"callback_url\": \"<<base_url>>/api/v1/mock-webhook\",\n  \"testing\": true\n}"
+            }
+          },
+          {
+            "v": "3",
+            "name": "Pending -> Callback Gagal (630000000006)",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/transaction",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"630000000006\",\n  \"ref_id\": \"PEND-6-001\",\n  \"sign\": \"<<pend_fail_sign>>\",\n  \"callback_url\": \"<<base_url>>/api/v1/mock-webhook\",\n  \"testing\": true\n}"
+            }
+          }
+        ]
+      },
+      {
+        "v": 2,
+        "name": "4. Webhook Receiver",
+        "folders": [],
+        "requests": [
+          {
+            "v": "3",
+            "name": "Inspect Mock Webhook Callback",
+            "method": "POST",
+            "endpoint": "<<base_url>>/api/v1/mock-webhook",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true
+              }
+            ],
+            "body": {
+              "contentType": "application/json",
+              "body": "{\n  \"data\": {\n    \"ref_id\": \"MOCK-WEBHOOK-TEST-001\",\n    \"customer_no\": \"630000000001\",\n    \"customer_name\": \"Nama Pelanggan Pertama\",\n    \"buyer_sku_code\": \"pln\",\n    \"admin\": 2500,\n    \"message\": \"Transaksi Sukses\",\n    \"status\": \"Sukses\",\n    \"rc\": \"00\",\n    \"sn\": \"S1234554321N\",\n    \"buyer_last_saldo\": 90000,\n    \"price\": 10000,\n    \"selling_price\": 11000\n  }\n}"
+            }
+          }
+        ]
+      },
+      {
+        "v": 2,
+        "name": "5. Observability & Monitoring",
+        "folders": [],
+        "requests": [
+          {
+            "v": "3",
+            "name": "Prometheus Metrics",
+            "method": "GET",
+            "endpoint": "<<base_url>>/metrics",
+            "params": [],
+            "headers": [
+              {
+                "key": "Accept",
+                "value": "text/plain",
+                "active": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "requests": []
+  }
+]

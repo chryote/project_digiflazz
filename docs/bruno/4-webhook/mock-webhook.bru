@@ -1,0 +1,35 @@
+meta {
+  name: Mock Webhook Receiver
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/v1/mock-webhook
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "data": {
+      "ref_id": "MOCK-WEBHOOK-TEST-001",
+      "customer_no": "630000000001",
+      "customer_name": "Nama Pelanggan Pertama",
+      "buyer_sku_code": "pln",
+      "admin": 2500,
+      "message": "Transaksi Sukses",
+      "status": "Sukses",
+      "rc": "00",
+      "sn": "S1234554321N",
+      "buyer_last_saldo": 90000,
+      "price": 10000,
+      "selling_price": 11000
+    }
+  }
+}

@@ -1,0 +1,635 @@
+{
+  "info": {
+    "_postman_id": "a9d8213b-1792-4f91-884b-012984189ac2",
+    "name": "Digiflazz PLN API",
+    "description": "Comprehensive API collection for Digiflazz PLN backend, compatible with Postman, Bruno, and Hoppscotch. Sourced using environment variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "username",
+      "value": "",
+      "type": "string",
+      "description": "Set from your .env file"
+    },
+    {
+      "key": "api_key",
+      "value": "",
+      "type": "string",
+      "description": "Set from your .env file"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "Bearer token obtained automatically from Login"
+    },
+    {
+      "key": "last_ref_id",
+      "value": "PAY-SAMPLE-001",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login & Issue Bearer Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var json = pm.response.json();",
+                  "    if (json.data && json.data.token && json.data.token.access_token) {",
+                  "        pm.collectionVariables.set('token', json.data.token.access_token);",
+                  "        console.log('Bearer token saved:', json.data.token.access_token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"password123\",\n  \"device_name\": \"API Client\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Authenticate merchant credentials and save personal access bearer token to collection variable."
+          }
+        },
+        {
+          "name": "Get Merchant Profile (Protected)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "me"]
+            },
+            "description": "Retrieve current authenticated merchant profile with balance and API key."
+          }
+        },
+        {
+          "name": "Logout & Revoke Bearer Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            },
+            "description": "Revoke active Sanctum bearer token."
+          }
+        },
+        {
+          "name": "Regenerate API Key",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/regenerate-api-key",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "regenerate-api-key"]
+            },
+            "description": "Regenerate Digiflazz merchant development API key under database lock."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. PLN Inquiry",
+      "item": [
+        {
+          "name": "Inquiry PLN Prepaid (1234554321)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var customerNo = '1234554321';",
+                  "var sign = CryptoJS.MD5(username + apiKey + customerNo).toString();",
+                  "pm.variables.set('inq_prepaid_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"customer_no\": \"1234554321\",\n  \"sign\": \"{{inq_prepaid_sign}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/inquiry-pln",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "inquiry-pln"]
+            },
+            "description": "Check ID Pelanggan / Prepaid PLN meter details."
+          }
+        },
+        {
+          "name": "Inquiry PLN Postpaid - 1 Lembar (530000000001)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var customerNo = '530000000001';",
+                  "var sign = CryptoJS.MD5(username + apiKey + customerNo).toString();",
+                  "pm.variables.set('inq_postpaid_1_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"INQ-POST-001\",\n  \"sign\": \"{{inq_postpaid_1_sign}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/inquiry-pln",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "inquiry-pln"]
+            },
+            "description": "Inquiry Postpaid PLN bill with 1 tagihan period."
+          }
+        },
+        {
+          "name": "Inquiry PLN Postpaid - 2 Lembar (530000000002)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var customerNo = '530000000002';",
+                  "var sign = CryptoJS.MD5(username + apiKey + customerNo).toString();",
+                  "pm.variables.set('inq_postpaid_2_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000002\",\n  \"ref_id\": \"INQ-POST-002\",\n  \"sign\": \"{{inq_postpaid_2_sign}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/inquiry-pln",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "inquiry-pln"]
+            },
+            "description": "Inquiry Postpaid PLN bill with 2 tagihan periods."
+          }
+        },
+        {
+          "name": "Inquiry PLN Gagal - Tidak Ditemukan (530000000003)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var customerNo = '530000000003';",
+                  "var sign = CryptoJS.MD5(username + apiKey + customerNo).toString();",
+                  "pm.variables.set('inq_fail_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000003\",\n  \"ref_id\": \"INQ-POST-003\",\n  \"sign\": \"{{inq_fail_sign}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/inquiry-pln",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "inquiry-pln"]
+            },
+            "description": "Testcase returning Gagal (RC 40 - Nomor Pelanggan Tidak Ditemukan)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. PLN Payment & Transactions",
+      "item": [
+        {
+          "name": "Payment Sukses - 1 Lembar (530000000001)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var refId = 'PAY-' + Date.now();",
+                  "pm.collectionVariables.set('last_ref_id', refId);",
+                  "var sign = CryptoJS.MD5(username + apiKey + refId).toString();",
+                  "pm.variables.set('dynamic_ref_id', refId);",
+                  "pm.variables.set('dynamic_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"{{dynamic_ref_id}}\",\n  \"sign\": \"{{dynamic_sign}}\",\n  \"testing\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/transaction",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "transaction"]
+            },
+            "description": "Execute successful PLN payment with ACID atomicity and pessimistic locking."
+          }
+        },
+        {
+          "name": "Cek Status / Idempotent Replay (Same ref_id)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var refId = pm.collectionVariables.get('last_ref_id') || 'PAY-SAMPLE-001';",
+                  "var sign = CryptoJS.MD5(username + apiKey + refId).toString();",
+                  "pm.variables.set('check_ref_id', refId);",
+                  "pm.variables.set('check_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"{{check_ref_id}}\",\n  \"sign\": \"{{check_sign}}\",\n  \"testing\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/transaction",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "transaction"]
+            },
+            "description": "Re-submit the same ref_id to verify idempotent status check without double deduction."
+          }
+        },
+        {
+          "name": "Payment Gagal - (530000000006)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var refId = 'PAY-FAIL-' + Date.now();",
+                  "var sign = CryptoJS.MD5(username + apiKey + refId).toString();",
+                  "pm.variables.set('fail_ref_id', refId);",
+                  "pm.variables.set('fail_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000006\",\n  \"ref_id\": \"{{fail_ref_id}}\",\n  \"sign\": \"{{fail_sign}}\",\n  \"testing\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/transaction",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "transaction"]
+            },
+            "description": "Testcase returning Gagal (RC 41 - Pembayaran Gagal)."
+          }
+        },
+        {
+          "name": "Pending -> Callback Sukses 1 Lembar (630000000001)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var refId = 'PENDING-1-' + Date.now();",
+                  "var sign = CryptoJS.MD5(username + apiKey + refId).toString();",
+                  "pm.variables.set('pend_1_ref_id', refId);",
+                  "pm.variables.set('pend_1_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"630000000001\",\n  \"ref_id\": \"{{pend_1_ref_id}}\",\n  \"sign\": \"{{pend_1_sign}}\",\n  \"callback_url\": \"{{base_url}}/api/v1/mock-webhook\",\n  \"testing\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/transaction",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "transaction"]
+            },
+            "description": "Initial response returns Pending (RC 03), then dispatches asynchronous success callback."
+          }
+        },
+        {
+          "name": "Pending -> Callback Sukses 2 Lembar (630000000002)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var refId = 'PENDING-2-' + Date.now();",
+                  "var sign = CryptoJS.MD5(username + apiKey + refId).toString();",
+                  "pm.variables.set('pend_2_ref_id', refId);",
+                  "pm.variables.set('pend_2_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"630000000002\",\n  \"ref_id\": \"{{pend_2_ref_id}}\",\n  \"sign\": \"{{pend_2_sign}}\",\n  \"callback_url\": \"{{base_url}}/api/v1/mock-webhook\",\n  \"testing\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/transaction",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "transaction"]
+            },
+            "description": "Initial response returns Pending (RC 03), then dispatches asynchronous success callback for 2 bill periods."
+          }
+        },
+        {
+          "name": "Pending -> Callback Gagal (630000000006)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var username = pm.collectionVariables.get('username') || '';",
+                  "var apiKey = pm.collectionVariables.get('api_key') || '';",
+                  "var refId = 'PENDING-6-' + Date.now();",
+                  "var sign = CryptoJS.MD5(username + apiKey + refId).toString();",
+                  "pm.variables.set('pend_6_ref_id', refId);",
+                  "pm.variables.set('pend_6_sign', sign);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commands\": \"pay-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"630000000006\",\n  \"ref_id\": \"{{pend_6_ref_id}}\",\n  \"sign\": \"{{pend_6_sign}}\",\n  \"callback_url\": \"{{base_url}}/api/v1/mock-webhook\",\n  \"testing\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/transaction",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "transaction"]
+            },
+            "description": "Initial response returns Pending (RC 03), then dispatches asynchronous failure callback."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Webhook Receiver",
+      "item": [
+        {
+          "name": "Inspect Mock Webhook Callback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"ref_id\": \"MOCK-WEBHOOK-TEST-001\",\n    \"customer_no\": \"630000000001\",\n    \"customer_name\": \"Nama Pelanggan Pertama\",\n    \"buyer_sku_code\": \"pln\",\n    \"admin\": 2500,\n    \"message\": \"Transaksi Sukses\",\n    \"status\": \"Sukses\",\n    \"rc\": \"00\",\n    \"sn\": \"S1234554321N\",\n    \"buyer_last_saldo\": 90000,\n    \"price\": 10000,\n    \"selling_price\": 11000\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/mock-webhook",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "mock-webhook"]
+            },
+            "description": "Simulate and test incoming webhook payload receiver."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Observability & Monitoring",
+      "item": [
+        {
+          "name": "Prometheus Metrics Endpoint",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/metrics",
+              "host": ["{{base_url}}"],
+              "path": ["metrics"]
+            },
+            "description": "Fetch real-time Prometheus metrics (latency, RPS, transaction distributions, DB status, memory)."
+          }
+        }
+      ]
+    }
+  ]
+}

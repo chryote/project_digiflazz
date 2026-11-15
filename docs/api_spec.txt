@@ -1,0 +1,177 @@
+<inquiry> 
+Inquiry PLN¶
+
+Cek validasi No ID PLN yang Anda miliki.
+Endpoint¶
+
+https://api.digiflazz.com/v1/inquiry-pln
+
+Request¶
+Contoh¶
+
+Berikut adalah struktur JSON yang diharapkan:
+
+{
+    "username": "username",
+    "customer_no": "1234554321",
+    "sign": "740b00a1b8784e028cc8078edf66d12b"
+}
+
+Deskripsi¶
+Parameter 	Deskripsi 	Tipe Data 	Wajib
+username 	Username yang telah diatur di pengaturan koneksi API 	String 	Ya
+customer_no 	ID PLN Customer 	String 	Ya
+sign 	Signature dengan formula md5(username + apiKey + customer_no) 	String 	Ya
+Response¶
+Contoh¶
+
+Berikut adalah contoh JSON yang akan diterima:
+
+{
+  "data": {
+    "message": "Transaksi Sukses",
+    "status": "Sukses",
+    "rc": "00",
+    "customer_no": "1234554321",
+    "meter_no": "1234554321",
+    "subscriber_id": "523300817840",
+    "name": "DAVID",
+    "segment_power": "R1 /000001300"
+  }
+}
+
+Deskripsi¶
+Parameter 	Deskripsi 	Tipe Data 	Wajib
+message 	Deskripsi Status Transaksi 	String 	Ya
+status 	Status transaksi Sukses, Gagal 	String 	Ya
+rc 	Response Code 	String 	Ya
+customer_no 	ID PLN customer 	String 	Ya
+meter_no 	No meteran 	String 	Tidak
+subscriber_id 	Informasi ID customer 	String 	Tidak
+name 	Nama customer 	String 	Tidak
+segment_power 	Daya 	String 	Tidak
+</inquiry>
+
+
+
+
+<testcase>
+PLN¶
+Test Cases¶
+buyer_sku_code 	customer_no 	Status
+pln 	530000000001 	Sukses (1 Tagihan)
+pln 	530000000002 	Sukses (2 Tagihan)
+pln 	530000000003 	Inquiry Gagal
+pln 	530000000006 	Pembayaran Gagal
+pln 	630000000001 	Pending, lalu callback Sukses (1 Tagihan)
+pln 	630000000002 	Pending, lalu callback Sukses (2 Tagihan)
+pln 	630000000006 	Pending, lalu callback Gagal
+Response Inquiry Sukses (1 Tagihan)¶
+
+{
+  "data": {
+    "ref_id": "some1d",
+    "customer_no": "530000000001",
+    "customer_name": "Nama Pelanggan Pertama",
+    "buyer_sku_code": "pln",
+    "admin": 2500,
+    "message": "Transaksi Sukses",
+    "status": "Sukses",
+    "rc": "00",
+    "buyer_last_saldo": 100000,
+    "price": 10000,
+    "selling_price": 11000,
+    "desc": {
+      "tarif": "R1",
+      "daya": 1300,
+      "lembar_tagihan": 1,
+      "detail": [
+        {
+          "periode": "201901",
+          "nilai_tagihan": "8000",
+          "admin": "2500",
+          "denda": "500"
+        }
+      ]
+    }
+  }
+}
+
+Response Payment Sukses (1 Tagihan)¶
+
+{
+  "data": {
+    "ref_id": "some1d",
+    "customer_no": "530000000001",
+    "customer_name": "Nama Pelanggan Pertama",
+    "buyer_sku_code": "pln",
+    "admin": 2500,
+    "message": "Transaksi Sukses",
+    "status": "Sukses",
+    "rc": "00",
+    "sn": "S1234554321N",
+    "buyer_last_saldo": 90000,
+    "price": 10000,
+    "selling_price": 11000,
+    "desc": {
+      "tarif": "R1",
+      "daya": 1300,
+      "lembar_tagihan": 1,
+      "detail": [
+        {
+          "periode": "201901",
+          "nilai_tagihan": "8000",
+          "admin": "2500",
+          "denda": "500",
+          "meter_awal": "00080000",
+          "meter_akhir": "00090000"
+        }
+      ]
+    }
+  }
+}
+
+Response Payment Sukses (2 Tagihan)¶
+
+{
+  "data": {
+    "ref_id": "some1d",
+    "customer_no": "530000000002",
+    "customer_name": "Nama Pelanggan Kedua",
+    "buyer_sku_code": "pln",
+    "admin": 5000,
+    "message": "Transaksi Sukses",
+    "status": "Sukses",
+    "rc": "00",
+    "sn": "S1234554321N",
+    "buyer_last_saldo": 77000,
+    "price": 23000,
+    "selling_price": 25000,
+    "desc": {
+      "tarif": "R1",
+      "daya": 1300,
+      "lembar_tagihan": 2,
+      "detail": [
+        {
+          "periode": "201901",
+          "nilai_tagihan": "8000",
+          "admin": "2500",
+          "denda": "500",
+          "meter_awal": "00080000",
+          "meter_akhir": "00090000"
+        },
+        {
+          "periode": "201902",
+          "nilai_tagihan": "11500",
+          "admin": "2500",
+          "denda": "0",
+          "meter_awal": "00090000",
+          "meter_akhir": "00095000"
+        }
+      ]
+    }
+  }
+}
+
+</testcase>
+
