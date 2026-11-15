@@ -11,9 +11,17 @@ A production-ready, clean-architecture backend implementing the **Digiflazz PLN 
 
 ---
 
-## Environment Configuration
+## 🔑 Environment Configuration
 
-Credentials must be configured exclusively in your `.env` file (never hardcoded in application code).
+Credentials and live integration settings must be configured exclusively in your `.env` file (never hardcoded in application code):
+
+```dotenv
+DIGIFLAZZ_BASE_URL=https://api.digiflazz.com/v1
+DIGIFLAZZ_MODE=live
+```
+
+* **`DIGIFLAZZ_MODE=live`**: Forwards all inquiry and payment transactions directly to the live Digiflazz cloud endpoints (`https://api.digiflazz.com/v1/transaction` and `https://api.digiflazz.com/v1/inquiry-pln`).
+* **`DIGIFLAZZ_MODE=mock`**: Processes requests locally against the seeded testcase database for instant offline testing and CI/CD pipelines.
 
 Access in PHP code:
 ```php
@@ -21,6 +29,8 @@ use App\Constants\DigiflazzConstant;
 
 $username = DigiflazzConstant::username();
 $apiKey   = DigiflazzConstant::developmentKey();
+$baseUrl  = config('digiflazz.base_url');
+$mode     = config('digiflazz.mode');
 ```
 
 ---
@@ -59,9 +69,10 @@ app/
 └── Services/                           # Business logic layer
     ├── Auth/AuthService.php            # Token creation, hashing, session management
     ├── Digiflazz/
+    │   ├── DigiflazzApiClient.php        # Live HTTP client for https://api.digiflazz.com/v1
     │   ├── DigiflazzSignatureService.php # MD5 signature calculation & verification
-    │   ├── PlnInquiryService.php         # Inquiry evaluation & formatting
-    │   ├── PlnPaymentService.php         # Balance handling, idempotency, payments
+    │   ├── PlnInquiryService.php         # Inquiry evaluation & live forwarding
+    │   ├── PlnPaymentService.php         # Balance handling, live transactions & idempotency
     │   └── WebhookDispatchService.php    # Asynchronous webhook dispatcher
     └── Monitoring/
         └── ApiMetricsCollector.php     # Real-time metrics aggregator
@@ -401,8 +412,11 @@ docker compose exec app php artisan test
 
 # Or directly on host
 php artisan test
+
+# Run live Digiflazz cloud integration tests
+php artisan test --filter LiveDigiflazzApiTest
 ```
-*Runs 38 test methods (286 assertions) across Unit and Feature suites verifying signatures, login flows, token revocations, transaction spec, test cases, ACID guarantees, idempotency, and concurrency protection.*
+*Runs 43 test methods (308 assertions) across Unit, Feature, and Live API suites verifying live Digiflazz connectivity, signatures, login flows, token revocations, transaction spec, test cases, ACID guarantees, idempotency, and concurrency protection.*
 
 ---
 

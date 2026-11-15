@@ -118,7 +118,7 @@
             ],
             "body": {
               "contentType": "application/json",
-              "body": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"INQ-POST-001\",\n  \"sign\": \"<<sign_postpaid_1>>\"\n}"
+              "body": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"INQ-POST-001\",\n  \"sign\": \"<<sign_postpaid_1>>\",\n  \"testing\": true\n}"
             }
           },
           {
@@ -136,7 +136,7 @@
             ],
             "body": {
               "contentType": "application/json",
-              "body": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000002\",\n  \"ref_id\": \"INQ-POST-002\",\n  \"sign\": \"<<sign_postpaid_2>>\"\n}"
+              "body": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000002\",\n  \"ref_id\": \"INQ-POST-002\",\n  \"sign\": \"<<sign_postpaid_2>>\",\n  \"testing\": true\n}"
             }
           },
           {
@@ -154,7 +154,7 @@
             ],
             "body": {
               "contentType": "application/json",
-              "body": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000003\",\n  \"ref_id\": \"INQ-POST-003\",\n  \"sign\": \"<<sign_fail>>\"\n}"
+              "body": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"<<username>>\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000003\",\n  \"ref_id\": \"INQ-POST-003\",\n  \"sign\": \"<<sign_fail>>\",\n  \"testing\": true\n}"
             }
           }
         ]

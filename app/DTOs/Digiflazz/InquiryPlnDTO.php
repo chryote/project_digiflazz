@@ -10,6 +10,8 @@ readonly class InquiryPlnDTO
         public string $sign,
         public ?string $refId = null,
         public ?string $buyerSkuCode = 'pln',
+        public ?string $commands = null,
+        public ?bool $testing = true,
     ) {}
 
     public static function fromRequest(array $validated): self
@@ -20,6 +22,8 @@ readonly class InquiryPlnDTO
             sign: $validated['sign'],
             refId: $validated['ref_id'] ?? null,
             buyerSkuCode: $validated['buyer_sku_code'] ?? 'pln',
+            commands: $validated['commands'] ?? null,
+            testing: isset($validated['testing']) ? (bool) $validated['testing'] : true,
         );
     }
 }

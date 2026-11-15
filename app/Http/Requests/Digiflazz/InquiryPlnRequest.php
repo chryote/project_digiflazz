@@ -21,6 +21,8 @@ class InquiryPlnRequest extends FormRequest
             'sign' => ['required', 'string'],
             'ref_id' => ['nullable', 'string'],
             'buyer_sku_code' => ['nullable', 'string'],
+            'commands' => ['nullable', 'string'],
+            'testing' => ['nullable', 'boolean'],
         ];
     }
 

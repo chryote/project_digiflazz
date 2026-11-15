@@ -12,14 +12,16 @@ use App\Models\User;
 class PlnInquiryService
 {
     public function __construct(
-        protected DigiflazzSignatureService $signatureService
+        protected DigiflazzSignatureService $signatureService,
+        protected DigiflazzApiClient $apiClient
     ) {}
 
     /**
-     * Process PLN Inquiry request according to Digiflazz specification.
+     * Process PLN Inquiry request by hitting live Digiflazz or local mock fallback.
      */
     public function inquire(InquiryPlnDTO $dto): array
     {
+        // 1. Initial User Lookup
         $user = User::where('username', $dto->username)->first();
 
         if (! $user) {
@@ -33,7 +35,7 @@ class PlnInquiryService
             ];
         }
 
-        // Validate signature: md5(username + apiKey + customer_no) or md5(username + apiKey + ref_id)
+        // 2. Validate Signature: md5(username + apiKey + customer_no) or md5(username + apiKey + ref_id)
         $isValidSign = $this->signatureService->verify(
             username: $user->username,
             apiKey: $user->api_key,
@@ -52,9 +54,51 @@ class PlnInquiryService
             ];
         }
 
+        // 3. Live Mode: Dispatch HTTP request to live Digiflazz API
+        if (config('digiflazz.mode', 'live') === 'live') {
+            $isPostpaid = ($dto->commands === 'inq-pasca')
+                || ($dto->refId !== null)
+                || str_starts_with($dto->customerNo, '53')
+                || str_starts_with($dto->customerNo, '63');
+
+            if ($isPostpaid) {
+                // Postpaid inquiry goes to https://api.digiflazz.com/v1/transaction with commands=inq-pasca
+                $refId = $dto->refId ?? ('INQ-' . time());
+                $liveResult = $this->apiClient->inquirePostpaid(
+                    customerNo: $dto->customerNo,
+                    refId: $refId,
+                    sku: $dto->buyerSkuCode ?? 'pln',
+                    testing: $dto->testing ?? true
+                );
+            } else {
+                // Prepaid PLN ID inquiry goes to https://api.digiflazz.com/v1/inquiry-pln
+                $liveResult = $this->apiClient->inquirePrepaid(
+                    customerNo: $dto->customerNo,
+                    testing: $dto->testing ?? true
+                );
+            }
+
+            // If live response contains buyer_last_saldo, synchronize with local user balance if applicable
+            if (isset($liveResult['data']) && is_array($liveResult['data'])) {
+                if (isset($liveResult['data']['buyer_last_saldo'])) {
+                    $liveResult['data']['buyer_last_saldo'] = (int) $user->balance;
+                }
+
+                return $liveResult;
+            }
+        }
+
+        // 4. Mock / Local Sandbox Fallback
+        return $this->inquireLocalMock($dto, $user);
+    }
+
+    /**
+     * Process inquiry using local seeded database for offline testing.
+     */
+    protected function inquireLocalMock(InquiryPlnDTO $dto, User $user): array
+    {
         $customer = PlnCustomer::where('customer_no', $dto->customerNo)->first();
 
-        // Customer not found or inquiry failed test case (e.g. 530000000003)
         if (! $customer || $customer->behavior === CustomerBehavior::INQUIRY_FAILED->value) {
             return [
                 'data' => [
@@ -66,7 +110,6 @@ class PlnInquiryService
             ];
         }
 
-        // Section 1: ID / Prepaid PLN Inquiry format
         if ($customer->behavior === CustomerBehavior::PREPAID_INQUIRY->value) {
             return [
                 'data' => [
@@ -82,7 +125,6 @@ class PlnInquiryService
             ];
         }
 
-        // Section 2: Postpaid Inquiry format
         return [
             'data' => [
                 'ref_id' => $dto->refId ?? 'some1d',

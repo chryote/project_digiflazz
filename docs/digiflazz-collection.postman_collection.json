@@ -203,8 +203,9 @@
                 "exec": [
                   "var username = pm.collectionVariables.get('username') || '';",
                   "var apiKey = pm.collectionVariables.get('api_key') || '';",
-                  "var customerNo = '530000000001';",
-                  "var sign = CryptoJS.MD5(username + apiKey + customerNo).toString();",
+                  "var refId = 'INQ-1-' + Date.now();",
+                  "var sign = CryptoJS.MD5(username + apiKey + refId).toString();",
+                  "pm.variables.set('inq_postpaid_1_ref_id', refId);",
                   "pm.variables.set('inq_postpaid_1_sign', sign);"
                 ],
                 "type": "text/javascript"
@@ -225,14 +226,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"INQ-POST-001\",\n  \"sign\": \"{{inq_postpaid_1_sign}}\"\n}"
+              "raw": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000001\",\n  \"ref_id\": \"{{inq_postpaid_1_ref_id}}\",\n  \"sign\": \"{{inq_postpaid_1_sign}}\",\n  \"testing\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/inquiry-pln",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "inquiry-pln"]
             },
-            "description": "Inquiry Postpaid PLN bill with 1 tagihan period."
+            "description": "Inquiry Postpaid PLN bill with 1 tagihan period hitting live Digiflazz."
           }
         },
         {
@@ -244,8 +245,9 @@
                 "exec": [
                   "var username = pm.collectionVariables.get('username') || '';",
                   "var apiKey = pm.collectionVariables.get('api_key') || '';",
-                  "var customerNo = '530000000002';",
-                  "var sign = CryptoJS.MD5(username + apiKey + customerNo).toString();",
+                  "var refId = 'INQ-2-' + Date.now();",
+                  "var sign = CryptoJS.MD5(username + apiKey + refId).toString();",
+                  "pm.variables.set('inq_postpaid_2_ref_id', refId);",
                   "pm.variables.set('inq_postpaid_2_sign', sign);"
                 ],
                 "type": "text/javascript"
@@ -266,14 +268,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000002\",\n  \"ref_id\": \"INQ-POST-002\",\n  \"sign\": \"{{inq_postpaid_2_sign}}\"\n}"
+              "raw": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000002\",\n  \"ref_id\": \"{{inq_postpaid_2_ref_id}}\",\n  \"sign\": \"{{inq_postpaid_2_sign}}\",\n  \"testing\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/inquiry-pln",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "inquiry-pln"]
             },
-            "description": "Inquiry Postpaid PLN bill with 2 tagihan periods."
+            "description": "Inquiry Postpaid PLN bill with 2 tagihan periods hitting live Digiflazz."
           }
         },
         {
@@ -285,8 +287,9 @@
                 "exec": [
                   "var username = pm.collectionVariables.get('username') || '';",
                   "var apiKey = pm.collectionVariables.get('api_key') || '';",
-                  "var customerNo = '530000000003';",
-                  "var sign = CryptoJS.MD5(username + apiKey + customerNo).toString();",
+                  "var refId = 'INQ-3-' + Date.now();",
+                  "var sign = CryptoJS.MD5(username + apiKey + refId).toString();",
+                  "pm.variables.set('inq_fail_ref_id', refId);",
                   "pm.variables.set('inq_fail_sign', sign);"
                 ],
                 "type": "text/javascript"
@@ -307,14 +310,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000003\",\n  \"ref_id\": \"INQ-POST-003\",\n  \"sign\": \"{{inq_fail_sign}}\"\n}"
+              "raw": "{\n  \"commands\": \"inq-pasca\",\n  \"username\": \"{{username}}\",\n  \"buyer_sku_code\": \"pln\",\n  \"customer_no\": \"530000000003\",\n  \"ref_id\": \"{{inq_fail_ref_id}}\",\n  \"sign\": \"{{inq_fail_sign}}\",\n  \"testing\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/inquiry-pln",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "inquiry-pln"]
             },
-            "description": "Testcase returning Gagal (RC 40 - Nomor Pelanggan Tidak Ditemukan)."
+            "description": "Testcase returning Gagal (RC 40 - Nomor Pelanggan Tidak Ditemukan) on live Digiflazz."
           }
         }
       ]

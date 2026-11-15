@@ -18,9 +18,10 @@ headers {
 script:pre-request {
   const username = bru.getVar("username") || "";
   const apiKey = bru.getVar("api_key") || "";
-  const customerNo = "530000000003";
+  const refId = "INQ-BRU-FAIL-" + Date.now();
+  bru.setVar("dynamic_inq_ref_id_fail", refId);
   const crypto = require("crypto");
-  const sign = crypto.createHash("md5").update(username + apiKey + customerNo).digest("hex");
+  const sign = crypto.createHash("md5").update(username + apiKey + refId).digest("hex");
   bru.setVar("inq_sign_fail", sign);
 }
 
@@ -30,7 +31,8 @@ body:json {
     "username": "{{username}}",
     "buyer_sku_code": "pln",
     "customer_no": "530000000003",
-    "ref_id": "INQ-POST-003",
-    "sign": "{{inq_sign_fail}}"
+    "ref_id": "{{dynamic_inq_ref_id_fail}}",
+    "sign": "{{inq_sign_fail}}",
+    "testing": true
   }
 }
