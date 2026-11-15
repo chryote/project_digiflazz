@@ -1,5 +1,6 @@
 ```dotenv
-You need to apply for a Digiflazz account to obtain your API credentials. Check out https://developer.digiflazz.com/api/buyer/persiapan/ for more information.
+You need to apply for a Digiflazz account to obtain your API credentials. 
+Check out https://developer.digiflazz.com/api/buyer/persiapan/ 
 ```
 
 # Digiflazz PLN Backend & Monitoring Stack
