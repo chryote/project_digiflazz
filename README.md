@@ -1,8 +1,6 @@
-```dotenv
-You need to apply for a Digiflazz account to obtain your API credentials. 
-Check out https://developer.digiflazz.com/api/buyer/persiapan/ 
-```
-
+> [!IMPORTANT]
+> You need to apply for a Digiflazz account to obtain your live API credentials.
+> Check out https://developer.digiflazz.com/api/buyer/persiapan/
 # Digiflazz PLN Backend & Monitoring Stack
 
 A production-ready, clean-architecture backend implementing the **Digiflazz PLN API Specification** with:
