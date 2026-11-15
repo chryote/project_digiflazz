@@ -1,3 +1,7 @@
+```dotenv
+You need to apply for a Digiflazz account to obtain your API credentials. Check out https://developer.digiflazz.com/api/buyer/persiapan/ for more information.
+```
+
 # Digiflazz PLN Backend & Monitoring Stack
 
 A production-ready, clean-architecture backend implementing the **Digiflazz PLN API Specification** with:
@@ -22,6 +26,14 @@ DIGIFLAZZ_MODE=live
 
 * **`DIGIFLAZZ_MODE=live`**: Forwards all inquiry and payment transactions directly to the live Digiflazz cloud endpoints (`https://api.digiflazz.com/v1/transaction` and `https://api.digiflazz.com/v1/inquiry-pln`).
 * **`DIGIFLAZZ_MODE=mock`**: Processes requests locally against the seeded testcase database for instant offline testing and CI/CD pipelines.
+
+> [!TIP]
+> **Testing Without a Live Digiflazz Account:**
+> If you don't have a live Digiflazz merchant account or API key, you can test 100% of all features locally in **Mock Mode**:
+> 1. Set `DIGIFLAZZ_MODE=mock` in your `.env`.
+> 2. Put any arbitrary dummy values for credentials in `.env` (e.g., `DIGIFLAZZ_USERNAME=demo_user` and `DIGIFLAZZ_DEVELOPMENT_KEY=demo_key_123`).
+> 3. Run `php artisan migrate --seed`.
+> 4. All 8 official Digiflazz test cases (prepaid inquiries, postpaid inquiries with 1 & 2 bills, failure cases, asynchronous webhooks, and idempotent status checks) will execute completely offline with full ACID compliance and Prometheus monitoring!
 
 Access in PHP code:
 ```php
